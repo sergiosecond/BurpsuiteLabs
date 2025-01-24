@@ -1,0 +1,9 @@
+https://portswigger.net/web-security/authentication/auth-lab-usernames
+https://portswigger.net/web-security/authentication/auth-lab-passwords
+
+X-Forwarded-Host: exploit-server.net --> redireccionar a nuestro server la petición de cambio de password
+X-Forwarded-For: 1 --> ir variando nº para que no sepa que somos el mismo atacante en un brute force
+añadir 5 bytes nulos con CLUSTERBOMB en password en intruder
+Fuerza bruta en un json, poniiendo todos los users posibles
+chequear la cookie y decodearla a ver si se puede forzar
+si el restablecer password tiene token , probar sin ponerlo pero sí con el usuario enumerado

