@@ -12,7 +12,7 @@ You have to enter de ctrl + f keys and search the vulnerability for his name in 
 1. [Access Control]
 2. [Authentication]
 3. [ClickJacking]
-4. [OS Command Injection]
+4. **[OS Command Injection](#os-command-injection)**
 5. [CORS]
 6. [CSRF]
 7. [GraphQL]
@@ -30,7 +30,16 @@ You have to enter de ctrl + f keys and search the vulnerability for his name in 
 19. [Web Cache Poisoning]
 20. [XSS]
 21. [XXE]
-22. [Mandatory Labs]
+22. **[Mandatory Labs]**
+
+
+## 🌟 Personalización adicional
+
+Puedes usar badges para hacerlo aún más llamativo:
+
+[![Security Badge](https://img.shields.io/badge/security-critical-red)](https://github.com/)
+[![Topics](https://img.shields.io/badge/topics-22-blue)](https://github.com/)
+
 
 
 ---
